@@ -60,12 +60,7 @@ public class MdxService extends Service {
         @Override
         public void request(final String json) {
             Logger.d(TAG, "request()");
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    onResponse("request(" + json + ")");
-                }
-            });
+            mHandler.post(() -> onResponse("request(" + json + ")"));
         }
 
         @Override

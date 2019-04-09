@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.android.mdx.IRemoteService;
 import com.example.android.mdx.IServiceCallback;
+import com.example.android.mdx.MdxApi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,37 +34,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Logger.d(TAG, "onCreate()");
 
+        MdxApi.init(this);
+
+//        MdxApi.
+
         Button buttonBind = findViewById(R.id.button_bind);
-        buttonBind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bindService();
-            }
-        });
+        buttonBind.setOnClickListener(v -> bindService());
 
         Button buttonUnbind = findViewById(R.id.button_unbind);
-        buttonUnbind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                unbindService();
-            }
-        });
+        buttonUnbind.setOnClickListener(v -> unbindService());
 
         Button buttonRequest = findViewById(R.id.button_request);
-        buttonRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                request(mEditText.getText().toString());
-            }
-        });
+        buttonRequest.setOnClickListener(v -> request(mEditText.getText().toString()));
 
         Button buttonGet = findViewById(R.id.button_get);
-        buttonGet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String result = get(mEditText.getText().toString());
-                mTextView.setText(result);
-            }
+        buttonGet.setOnClickListener(v -> {
+            String result = get(mEditText.getText().toString());
+            mTextView.setText(result);
         });
 
         mEditText = findViewById(R.id.editText);
@@ -152,12 +138,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResponse(final String json) {
             Logger.d(TAG, "onResponse(" + json + ")");
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mTextView.setText(json);
-                }
-            });
+            mHandler.post(() -> mTextView.setText(json));
         }
     };
 }
