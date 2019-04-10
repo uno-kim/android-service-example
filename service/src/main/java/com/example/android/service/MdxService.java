@@ -3,6 +3,7 @@ package com.example.android.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
@@ -15,6 +16,8 @@ public class MdxService extends Service {
     private static final String TAG = "MdxService";
 
     private final Handler mHandler = new Handler();
+    private HandlerThread mMessengerHandlerThread;
+    private Handler mMessengerHandler;
 
     public MdxService() {
     }
@@ -23,6 +26,9 @@ public class MdxService extends Service {
     public void onCreate() {
         super.onCreate();
         Logger.d(TAG, "onCreate()");
+        mMessengerHandlerThread = new HandlerThread("Messenger");
+        mMessengerHandlerThread.start();
+        mMessengerHandler = new Handler(mMessengerHandlerThread.getLooper());
     }
 
     @Override
@@ -34,6 +40,8 @@ public class MdxService extends Service {
     @Override
     public void onDestroy() {
         Logger.d(TAG, "onDestroy()");
+        mMessengerHandler.removeCallbacksAndMessages(null);
+        mMessengerHandlerThread.quitSafely();
         super.onDestroy();
     }
 
@@ -60,7 +68,14 @@ public class MdxService extends Service {
         @Override
         public void request(final String json) {
             Logger.d(TAG, "request()");
-            mHandler.post(() -> onResponse("request(" + json + ")"));
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            mHandler.post(() -> onResponse("request(" + json + ")"));
+            mMessengerHandler.post(() -> onResponse("request(" + json + ")"));
+//            onResponse("request(" + json + ")");
         }
 
         @Override

@@ -1,6 +1,5 @@
 package com.example.android.client;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -12,14 +11,13 @@ import com.example.android.mdx.MdxApi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class SecondActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "SecondActivity";
 
-    // todo appy viewModel
     private final Handler mHandler = new Handler();
-    private EditText mEditText;
     private TextView mTextView;
+    private EditText mEditText;
     private MdxApi mMdxApi;
 
     private IServiceCallback mCallback = new IServiceCallback.Stub() {
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_second);
         Logger.d(TAG, "onCreate()");
 
         mMdxApi = new MdxApi.Builder(this)
@@ -46,11 +44,8 @@ public class MainActivity extends AppCompatActivity {
                 .setCallback(mCallback)
                 .build();
 
-        Button buttonNext = findViewById(R.id.button_next);
-        buttonNext.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-            startActivity(intent);
-        });
+        mTextView = findViewById(R.id.tv_result);
+        mEditText = findViewById(R.id.editText);
 
         Button buttonRequest = findViewById(R.id.button_request);
         buttonRequest.setOnClickListener(v -> request1(mEditText.getText().toString()));
@@ -60,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
             String result = get(mEditText.getText().toString());
             mTextView.setText(result);
         });
-
-        mEditText = findViewById(R.id.editText);
-        mTextView = findViewById(R.id.tv_result);
     }
 
     private void request(String json) {
